@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台灣/外島旅遊隨機選 - 台式Q版</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 載入 Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 載入 Google Fonts (日式圓體) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;900&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // 台味配色
+                        'taiwan-red': '#E63946',   // 茄芷袋紅
+                        'taiwan-blue': '#1D3557',  // 茄芷袋藍
+                        'taiwan-green': '#2A9D8F', // 茄芷袋綠 / 小綠人
+                        'taiwan-yellow': '#E9C46A',// 芒果/啤酒黃
+                        'taiwan-bg': '#FDF9E3',    // 復古紙張米黃
+                        'taiwan-ink': '#264653',   // 手繪墨水黑
+                    },
+                    animation: {
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'slotRoll': 'slotRoll 0.1s infinite linear',
+                        'float': 'float 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        },
+                        slotRoll: {
+                            '0%': { transform: 'translateY(0)', opacity: '1' },
+                            '50%': { transform: 'translateY(-10px)', opacity: '0.5' },
+                            '50.1%': { transform: 'translateY(10px)', opacity: '0.5' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 引入 justfont 開放授權的粉圓體 (jf-openhuninn) 作為後續備用 */
+        @import url('https://cdn.jsdelivr.net/npm/jf-openhuninn-1.1/jf-openhuninn-1.1.min.css');
+
+        body {
+            /* 將全域字體首選設定為日式圓體 (Zen Maru Gothic / M PLUS Rounded 1c) */
+            font-family: 'Zen Maru Gothic', 'M PLUS Rounded 1c', 'jf-openhuninn-1.1', 'jf-openhuninn', 'Noto Sans TC', sans-serif;
+            background-color: #FDF9E3;
+            /* 復古點點背景 */
+            background-image: radial-gradient(#E9C46A 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+            color: #264653;
+        }
+
+        /* 保留原本針對特定區塊強制套用的圓體類別，以防萬一 */
+        .font-rounded {
+            font-family: 'Zen Maru Gothic', 'M PLUS Rounded 1c', 'jf-openhuninn-1.1', 'jf-openhuninn', sans-serif;
+        }
+
+        /* 手繪風格卡片外框 - 規則圓角 */
+        .hand-drawn-border {
+            border: 4px solid #264653;
+            border-radius: 20px; 
+            box-shadow: 8px 8px 0px #1D3557;
+            transition: all 0.2s ease;
+        }
+        
+        .hand-drawn-border:hover {
+            box-shadow: 4px 4px 0px #1D3557;
+            transform: translate(4px, 4px);
+        }
+
+        /* 按鈕手繪風 - 規則圓角 */
+        .btn-hand-drawn {
+            border: 3px solid #264653;
+            border-radius: 16px; 
+            box-shadow: 4px 4px 0px #264653;
+            transition: all 0.1s;
+        }
+        .btn-hand-drawn:active {
+            box-shadow: 0px 0px 0px #264653;
+            transform: translate(4px, 4px);
+        }
+
+        /* 篩選標籤選中狀態 */
+        .filter-btn {
+            border: 2px solid #264653;
+            border-radius: 12px;
+            box-shadow: 2px 2px 0px #264653;
+            transition: all 0.1s;
+        }
+        .filter-btn.active {
+            background-color: #E63946; 
+            color: white;
+            box-shadow: 0px 0px 0px #264653;
+            transform: translate(2px, 2px);
+        }
+
+        /* 裝飾 SVG */
+        .deco-svg {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- 背景Q版裝飾 (珍奶) -->
+    <svg class="deco-svg animate-float hidden md:block" style="top: 10%; left: 10%; width: 80px;" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 30 L30 90 Q35 100 50 100 Q65 100 70 90 L80 30 Z" fill="#E9C46A" stroke="#264653" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M15 30 L85 30" stroke="#264653" stroke-width="8" stroke-linecap="round"/>
+        <path d="M50 10 L50 30" stroke="#E63946" stroke-width="8" stroke-linecap="round"/>
+        <!-- 珍珠 -->
+        <circle cx="40" cy="85" r="5" fill="#264653"/>
+        <circle cx="55" cy="90" r="5" fill="#264653"/>
+        <circle cx="65" cy="80" r="5" fill="#264653"/>
+        <circle cx="35" cy="75" r="5" fill="#264653"/>
+        <circle cx="50" cy="70" r="5" fill="#264653"/>
+    </svg>
+
+    <!-- 背景Q版裝飾 (小籠包) -->
+    <svg class="deco-svg animate-bounce-slow hidden md:block" style="bottom: 15%; right: 10%; width: 100px;" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- 蒸籠 -->
+        <ellipse cx="50" cy="80" rx="40" ry="15" fill="#E9C46A" stroke="#264653" stroke-width="4"/>
+        <rect x="10" y="70" width="80" height="10" fill="#E9C46A" stroke="#264653" stroke-width="4"/>
+        <!-- 小籠包本體 -->
+        <path d="M20 70 Q20 40 50 30 Q80 40 80 70 Z" fill="white" stroke="#264653" stroke-width="4" stroke-linejoin="round"/>
+        <!-- 皺褶 -->
+        <path d="M50 30 Q45 50 35 70" fill="none" stroke="#264653" stroke-width="3" stroke-linecap="round"/>
+        <path d="M50 30 Q50 50 50 70" fill="none" stroke="#264653" stroke-width="3" stroke-linecap="round"/>
+        <path d="M50 30 Q55 50 65 70" fill="none" stroke="#264653" stroke-width="3" stroke-linecap="round"/>
+        <!-- 萌臉 -->
+        <circle cx="40" cy="55" r="3" fill="#264653"/>
+        <circle cx="60" cy="55" r="3" fill="#264653"/>
+        <path d="M45 60 Q50 65 55 60" fill="none" stroke="#E63946" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+
+    <div class="max-w-xl w-full relative z-10">
+        <!-- 標題裝飾 -->
+        <div class="text-center mb-6 relative">
+            <span class="absolute -top-6 -left-2 sm:-left-4 text-3xl sm:text-4xl animate-wiggle">🛵</span>
+            <!-- 確保標題套用 .font-rounded 類別 -->
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-black text-taiwan-blue tracking-widest inline-block bg-white px-4 sm:px-6 py-2 border-4 border-taiwan-ink rounded-full shadow-[4px_4px_0px_#E63946] transform -rotate-2 whitespace-nowrap font-rounded">
+                台灣/外島旅遊隨機選
+            </h1>
+            <p class="text-taiwan-ink text-sm sm:text-base md:text-lg mt-4 font-bold bg-taiwan-yellow inline-block px-3 sm:px-4 py-1 rounded-lg border-2 border-taiwan-ink transform rotate-1 font-rounded">
+                探索人文風情，隨機遇見驚喜！✨
+            </p>
+        </div>
+
+        <!-- 主要卡片 -->
+        <div class="bg-white p-4 sm:p-6 hand-drawn-border relative">
+            <!-- 區域篩選標籤 -->
+            <div class="mb-6">
+                <p class="text-sm font-bold text-taiwan-ink mb-3 flex items-center font-rounded">
+                    <i class="fa-solid fa-map-pin text-taiwan-red mr-2 text-lg"></i> 
+                    想去哪裡玩？(不選就是全台大亂鬥)
+                </p>
+                <div class="flex flex-wrap gap-2 font-rounded" id="region-filters">
+                    <button class="filter-btn px-4 py-1.5 text-sm font-bold bg-taiwan-bg text-taiwan-ink" data-region="north">北部</button>
+                    <button class="filter-btn px-4 py-1.5 text-sm font-bold bg-taiwan-bg text-taiwan-ink" data-region="central">中部</button>
+                    <button class="filter-btn px-4 py-1.5 text-sm font-bold bg-taiwan-bg text-taiwan-ink" data-region="south">南部</button>
+                    <button class="filter-btn px-4 py-1.5 text-sm font-bold bg-taiwan-bg text-taiwan-ink" data-region="east">東部</button>
+                    <button class="filter-btn px-4 py-1.5 text-sm font-bold bg-taiwan-bg text-taiwan-ink" data-region="island">外島</button>
+                </div>
+            </div>
+
+            <!-- 結果顯示區 -->
+            <div id="result-card" class="bg-taiwan-bg border-4 border-taiwan-ink rounded-2xl p-6 mb-6 text-center relative overflow-hidden">
+                <!-- 裝飾角 -->
+                <div class="absolute top-0 left-0 w-8 h-8 bg-taiwan-green border-r-4 border-b-4 border-taiwan-ink rounded-br-2xl"></div>
+                
+                <div id="city-badge" class="font-rounded inline-block bg-taiwan-blue text-white text-sm px-4 py-1 rounded-full mb-3 border-2 border-taiwan-ink opacity-0 transition-opacity font-bold transform -rotate-2">
+                    台灣之美
+                </div>
+                <!-- 確保結果文字也套用粉圓體 -->
+                <div id="district-display" class="font-rounded text-4xl sm:text-5xl md:text-6xl font-black text-taiwan-red mb-2 tracking-wide whitespace-nowrap">
+                    準備出發？
+                </div>
+                <div id="city-display" class="font-rounded text-lg sm:text-xl font-bold text-taiwan-ink bg-taiwan-yellow inline-block px-3 py-1 rounded-md border-2 border-taiwan-ink">
+                    點擊按鈕開抽！
+                </div>
+            </div>
+
+            <!-- 說明區 (初始隱藏) -->
+            <div id="info-section" class="max-h-0 overflow-hidden opacity-0 transition-all duration-500">
+                <!-- 文化特色 -->
+                <div class="bg-white p-4 border-4 border-solid border-taiwan-green rounded-xl relative mt-2 mb-6">
+                    <div class="font-rounded absolute -top-4 left-4 bg-taiwan-green text-white px-3 py-1 rounded-full border-2 border-taiwan-ink font-bold text-sm transform -rotate-3">
+                        <i class="fa-solid fa-camera-retro mr-1"></i> 地方風情
+                    </div>
+                    <!-- 說明文字也套用粉圓體 -->
+                    <p id="culture-info" class="font-rounded text-taiwan-ink text-base leading-relaxed mt-2 font-medium"></p>
+                </div>
+                
+                <!-- 互動按鈕群 -->
+                <div class="flex gap-2">
+                    <button id="maps-btn" class="font-rounded w-full py-3 bg-taiwan-yellow border-3 border-taiwan-ink text-taiwan-ink font-black rounded-xl btn-hand-drawn flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-map-location-dot mr-2 text-taiwan-blue"></i> Google 地圖
+                    </button>
+                </div>
+            </div>
+
+            <!-- 操作按鈕 -->
+            <div class="mt-8">
+                <button id="random-btn" 
+                        class="font-rounded w-full py-4 bg-taiwan-green text-white font-black text-2xl tracking-widest flex items-center justify-center btn-hand-drawn">
+                    <span id="btn-icon" class="mr-2 text-3xl">🧋</span>
+                    <span id="btn-text">開 始 抽 籤</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 頁底作者與 IG 連結 -->
+        <div class="font-rounded text-center mt-6 text-taiwan-ink font-bold text-sm flex flex-col items-center justify-center gap-1">
+            <p class="bg-white px-4 py-1 rounded-full border-2 border-taiwan-ink shadow-[2px_2px_0px_#264653]">@2026 AnBin玩食生活</p>
+            <a href="https://www.instagram.com/anbintrip" target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex items-center gap-2 hover:text-taiwan-red transition-colors bg-white px-4 py-1 rounded-full border-2 border-taiwan-ink shadow-[2px_2px_0px_#264653] group">
+                <i class="fa-brands fa-instagram text-xl group-hover:animate-bounce"></i> anbintrip
+            </a>
+        </div>
+    </div>
+
+    <!-- 提示訊息容器 -->
+    <div id="toast" class="font-rounded fixed top-4 left-1/2 transform -translate-x-1/2 bg-taiwan-ink text-white font-bold px-6 py-3 rounded-full border-4 border-taiwan-yellow opacity-0 transition-opacity pointer-events-none z-50 shadow-lg"></div>
+
+    <script>
+        // 行政區數據與區域分類
+        const regionsData = {
+            "north": ["基隆市", "臺北市", "新北市", "桃園市", "新竹縣", "新竹市", "宜蘭縣"],
+            "central": ["苗栗縣", "臺中市", "彰化縣", "南投縣", "雲林縣"],
+            "south": ["嘉義縣", "嘉義市", "臺南市", "高雄市", "屏東縣"],
+            "east": ["花蓮縣", "臺東縣"],
+            "island": ["澎湖縣", "金門縣", "連江縣"]
+        };
+
+        const taiwanDistricts = {
+            "臺北市": ["中正區", "大同區", "中山區", "松山區", "大安區", "萬華區", "信義區", "士林區", "北投區", "內湖區", "南港區", "文山區"],
+            "新北市": ["萬里區", "金山區", "板橋區", "汐止區", "深坑區", "石碇區", "瑞芳區", "平溪區", "雙溪區", "貢寮區", "新店區", "坪林區", "烏來區", "永和區", "中和區", "土城區", "三峽區", "樹林區", "鶯歌區", "三重區", "新莊區", "泰山區", "林口區", "蘆洲區", "五股區", "八里區", "淡水區", "三芝區", "石門區"],
+            "桃園市": ["桃園區", "中壢區", "大溪區", "楊梅區", "蘆竹區", "大園區", "龜山區", "八德區", "龍潭區", "平鎮區", "新屋區", "觀音區", "復興區"],
+            "臺中市": ["中區", "東區", "南區", "西區", "北區", "西屯區", "南屯區", "北屯區", "豐原區", "東勢區", "大甲區", "清水區", "沙鹿區", "梧棲區", "后里區", "神岡區", "潭子區", "大雅區", "新社區", "石岡區", "外埔區", "大安區", "烏日區", "大肚區", "龍井區", "霧峰區", "太平區", "大里區", "和平區"],
+            "臺南市": ["中西區", "東區", "南區", "北區", "安平區", "安南區", "永康區", "歸仁區", "新化區", "左鎮區", "玉井區", "楠西區", "南化區", "仁德區", "關廟區", "龍崎區", "官田區", "麻豆區", "佳里區", "西港區", "七股區", "將軍區", "學甲區", "北門區", "新營區", "後壁區", "白河區", "東山區", "六甲區", "下營區", "柳營區", "鹽水區", "善化區", "大內區", "山上區", "新市區", "安定區"],
+            "高雄市": ["新興區", "前金區", "苓雅區", "鼓山區", "旗津區", "鹽埕區", "前鎮區", "三民區", "楠梓區", "小港區", "左營區", "仁武區", "大社區", "岡山區", "路竹區", "阿蓮區", "田寮區", "燕巢區", "橋頭區", "梓官區", "彌陀區", "永安區", "湖內區", "鳳山區", "大寮區", "林園區", "鳥松區", "大樹區", "旗山區", "美濃區", "六龜區", "甲仙區", "杉林區", "內門區", "茂林區", "桃源區", "那瑪夏區"],
+            "基隆市": ["仁愛區", "信義區", "中正區", "中山區", "安樂區", "暖暖區", "七堵區"],
+            "新竹市": ["東區", "北區", "香山區"],
+            "嘉義市": ["東區", "西區"],
+            "新竹縣": ["竹北市", "竹東鎮", "新埔鎮", "關西鎮", "湖口鄉", "新豐鄉", "芎林鄉", "橫山鄉", "尖石鄉", "寶山鄉", "峨眉鄉", "五峰鄉"],
+            "苗栗縣": ["苗栗市", "通霄鎮", "苑裡鎮", "竹南鎮", "頭份市", "後龍鎮", "卓蘭鎮", "大湖鄉", "公館鄉", "銅鑼鄉", "三義鄉", "西湖鄉", "造橋鄉", "三灣鄉", "南庄鄉", "頭屋鄉", "獅潭鄉", "泰安鄉"],
+            "彰化縣": ["彰化市", "員林市", "和美鎮", "鹿港鎮", "溪湖鎮", "田中鎮", "北斗鎮", "二林鎮", "線西鄉", "伸港鄉", "福興鄉", "秀水鄉", "花壇鄉", "芬園鄉", "大村鄉", "埔心鄉", "永靖鄉", "社頭鄉", "二水鄉", "田尾鄉", "埤頭鄉", "芳苑鄉", "大城鄉", "竹塘鄉", "溪州鄉"],
+            "南投縣": ["南投市", "埔里鎮", "草屯鎮", "竹山鎮", "集集鎮", "名間鄉", "鹿谷鄉", "中寮鄉", "魚池鄉", "國姓鄉", "水里鄉", "信義鄉", "仁愛鄉"],
+            "雲林縣": ["斗六市", "斗南鎮", "虎尾鎮", "西螺鎮", "土庫鎮", "北港鎮", "古坑鄉", "大埤鄉", "莿桐鄉", "林內鄉", "二崙鄉", "崙背鄉", "麥寮鄉", "東勢鄉", "褒忠鄉", "臺西鄉", "元長鄉", "四湖鄉", "口湖鄉", "水林鄉"],
+            "嘉義縣": ["太保市", "朴子市", "布袋鎮", "大林鎮", "民雄鄉", "溪口鄉", "新港鄉", "六腳鄉", "東石鄉", "義竹鄉", "鹿草鄉", "中埔鄉", "竹崎鄉", "梅山鄉", "番路鄉", "大埔鄉", "阿里山鄉"],
+            "屏東縣": ["屏東市", "潮州鎮", "東港鎮", "恆春鎮", "萬丹鄉", "長治鄉", "麟洛鄉", "九如鄉", "里港鄉", "鹽埔鄉", "高樹鄉", "萬巒鄉", "內埔鄉", "竹田鄉", "新埤鄉", "枋寮鄉", "新園鄉", "崁頂鄉", "林邊鄉", "南州鄉", "佳冬鄉", "琉球鄉", "車城鄉", "滿州鄉", "霧臺鄉", "瑪家鄉", "泰武鄉", "來義鄉", "春日鄉", "獅子鄉", "牡丹鄉", "三地門鄉"],
+            "宜蘭縣": ["宜蘭市", "羅東鎮", "蘇澳鎮", "頭城鎮", "礁溪鄉", "壯圍鄉", "員山鄉", "冬山鄉", "五結鄉", "三星鄉", "大同鄉", "南澳鄉"],
+            "花蓮縣": ["花蓮市", "鳳林鎮", "玉里鎮", "新城鄉", "吉安鄉", "壽豐鄉", "光復鄉", "豐濱鄉", "瑞穗鄉", "萬榮鄉", "卓溪鄉", "富里鄉", "秀林鄉"],
+            "臺東縣": ["臺東市", "成功鎮", "關山鎮", "卑南鄉", "大武鄉", "太麻里鄉", "東河鄉", "長濱鄉", "鹿野鄉", "池上鄉", "綠島鄉", "蘭嶼鄉", "延平鄉", "海端鄉", "達仁鄉", "金峰鄉"],
+            "澎湖縣": ["馬公市", "湖西鄉", "白沙鄉", "西嶼鄉", "望安鄉", "七美鄉"],
+            "金門縣": ["金城鎮", "金湖鎮", "金沙鎮", "金寧鄉", "烈嶼鄉", "烏坵鄉"],
+            "連江縣": ["南竿鄉", "北竿鄉", "莒光鄉", "東引鄉"]
+        };
+
+        // 鄉鎮區資料庫 (地方風情)
+        const districtData = {
+            "基隆市_仁愛區": { culture: "基隆的市中心與商業樞紐。鄰近港口，擁有全台最著名的廟口夜市，是感受雨都繁華與在地海鮮美食的最佳去處。" },
+            "基隆市_中正區": { culture: "擁有豐富的海岸地形與歷史遺跡。從和平島的奇岩怪石到八斗子的漁港風情，是基隆重要的觀光與漁業重鎮。" },
+            "臺北市_中正區": { culture: "台灣的政治中樞，也是台北市的歷史核心。區內擁有總統府、自由廣場及眾多日治時期的古典建築，散發濃厚的歷史與莊嚴氣息。" },
+            "臺北市_大同區": { culture: "台北最早發展的區域之一，充滿老台北的懷舊風情。大稻埕的繁華歲月與迪化街的南北貨、中藥行，交織出獨特的歷史韻味。" },
+            "臺北市_萬華區": { culture: "俗稱「艋舺」，是台北的發源地。擁有百年歷史的龍山寺與剝皮寮老街，展現了最傳統的草根信仰與庶民生活樣貌。" },
+            "臺北市_信義區": { culture: "台灣的商業與金融中心，高樓林立、百貨密布。這裡展現了台北最現代化、國際化的一面，也是跨年煙火的焦點。" },
+            "臺北市_大安區": { culture: "台北的文教區，擁有綠意盎然的大安森林公園。巷弄內隱藏著無數獨立咖啡廳、文創小店，充滿文藝與慢活氣息。" },
+            "臺北市_北投區": { culture: "以豐富的地熱與溫泉資源聞名。日治時期發展出的溫泉鄉文化，讓這裡充滿了日式風情的老建築與綠意盎然的谷地景觀。" },
+            "新北市_淡水區": { culture: "坐擁淡水河與觀音山美景，是北台灣最早開發的港口之一。這裡交織著馬偕博士的足跡、西洋磚造洋樓與傳統的老街風情。" },
+            "新北市_瑞芳區": { culture: "昔日因金礦開採而繁華一時，如今以獨特的山城建築與壯麗的東北角海岸線聞名，充滿濃厚的懷舊與礦業歷史氛圍。" },
+            "新北市_平溪區": { culture: "沿著基隆河谷發展的聚落，因煤礦業而興盛。如今以放天燈祈福的傳統文化以及鐵道與老街並存的獨特景觀聞名國際。" },
+            "新北市_三峽區": { culture: "昔日為染布、茶葉的集散地。擁有全台保存最完整的連拱式紅磚街屋，以及雕刻精美的祖師廟，展現了深厚的傳統工藝與商業歷史。" },
+            "新北市_烏來區": { culture: "新北市面積最大、人口密度最低的行政區。以豐富的溫泉資源、泰雅族原住民文化以及壯麗的峽谷瀑布景觀著稱。" },
+            "桃園市_大溪區": { culture: "桃園最早發展的地方，大漢溪的內河航運曾造就其繁華。以華麗的巴洛克式立面老街與木器工藝聞名，也是豆干的故鄉。" },
+            "桃園市_復興區": { culture: "桃園唯一的山地原住民區，擁有北橫公路沿線壯麗的高山峽谷、神木群與豐富的泰雅族文化。" },
+            "新竹縣_北埔鄉": { culture: "台灣保存最完整的客家聚落之一。短短的老街上聚集了多處國定古蹟與歷史建築，展現了傳統客家拓墾的艱辛與智慧。" },
+            "新竹縣_橫山鄉": { culture: "早期因林業與礦業而繁華，著名的「內灣老街」即位於此。以客家風情、吊橋與內灣線鐵道風光吸引遊客，充滿懷舊氛圍。" },
+            "苗栗縣_南庄鄉": { culture: "擁有「慢城」認證的山城，匯聚了客家、泰雅族與賽夏族文化。桂花巷的狹窄階梯與百年老郵局，散發著寧靜古樸的氣息。" },
+            "苗栗縣_三義鄉": { culture: "台灣的「木雕之鄉」。除了精湛的木雕工藝，還有舊山線鐵道的歷史遺跡與每逢四、五月的浪漫油桐花雪。" },
+            "臺中市_中區": { culture: "台中最早發展的舊城區。雖然曾一度沒落，但近年透過舊建築活化與文創力量，重現了日治時期「小京都」的摩登風華。" },
+            "臺中市_西區": { culture: "台中的藝文核心地帶。草悟道串聯起科博館與美術館，巷弄內充滿老屋改造的獨立店鋪與咖啡廳，散發著慵懶的文青氣息。" },
+            "臺中市_新社區": { culture: "擁有「台中後花園」的美稱。氣候宜人，以廣闊的河階台地孕育出豐富的農特產，尤以香菇與浪漫的庭園咖啡景觀著稱。" },
+            "彰化縣_鹿港鎮": { culture: "「一府二鹿三艋舺」中的二鹿。保留了台灣最完整的清代閩南式建築與紅磚巷弄，擁有深厚的傳統工藝、民俗信仰與百年糕餅文化。" },
+            "南投縣_魚池鄉": { culture: "坐擁台灣最大的高山湖泊，也是紅茶的故鄉。這裡氣候宜人，邵族原住民文化與自然山水完美融合（日月潭即位於此）。" },
+            "南投縣_仁愛鄉": { culture: "地勢高聳，氣候高冷，是台灣重要的高山農業與避暑勝地。充滿了泰雅族、賽德克族風情與高山草原景致（清境農場即位於此）。" },
+            "南投縣_鹿谷鄉": { culture: "台灣著名的茶鄉，以凍頂烏龍茶聞名。擁有大面積的孟宗竹林與茶園景觀，氣候涼爽，是遠離塵囂的避暑勝地。" },
+            "雲林縣_北港鎮": { culture: "台灣媽祖信仰的重鎮，以朝天宮為中心發展。保留了傳統的廟宇建築藝術與濃厚的宗教節慶氛圍，也是花生與麻油的產地。" },
+            "嘉義市_東區": { culture: "阿里山林業開發的起點，保留了豐富的日式木造建築與鐵道文化。這裡生活步調悠閒，擁有著名的庶民美食與歷史公園。" },
+            "嘉義縣_阿里山鄉": { culture: "台灣最具代表性的高山風景區。以日出、雲海、晚霞、森林與高山鐵路「五奇」聞名於世，也是鄒族原住民的故鄉。" },
+            "臺南市_中西區": { culture: "「一府」的核心地帶，台灣歷史最悠久的區域。這裡的巷弄就是活的博物館，古蹟廟宇與老字號小吃密集度全台第一。" },
+            "臺南市_安平區": { culture: "台灣最早開發的市鎮，大航海時代的開端。海風中帶著歷史的氣味，劍獅、老街與洋行訴說著安平的歲月。" },
+            "臺南市_北門區": { culture: "位於濱海地帶，以傳統鹽業與漁業為主。擁有廣闊的鹽田景觀與浪漫的夕陽，近年因婚紗美地而成為新興的打卡熱點。" },
+            "高雄市_鹽埕區": { culture: "曾經是高雄最繁華的行政區，如今轉型為文創與藝術的重鎮。新舊交融，老屋咖啡與駁二特區吸引了大量年輕人。" },
+            "高雄市_旗津區": { culture: "高雄市唯一的沙洲半島，需要搭乘渡輪前往。擁有豐富的海洋文化、歷史砲台與燈塔，是高雄市民週末休閒的海濱勝地。" },
+            "高雄市_美濃區": { culture: "南台灣最著名的客家原鄉，保留了完整的客家文化與傳統技藝。油紙傘、菸樓與粄條是美濃最鮮明的標誌。" },
+            "屏東縣_恆春鎮": { culture: "位於國境之南，三面環海。擁有熱帶氣候、珊瑚礁地形，以及台灣保存最完整的清代城門，是海洋與古城交織之地。" },
+            "屏東縣_琉球鄉": { culture: "台灣唯一的珊瑚礁島嶼，俗稱小琉球。不受東北季風影響，四季皆宜旅遊。以保育成功的海龜生態與奇特的礁岩海岸聞名。" },
+            "宜蘭縣_礁溪鄉": { culture: "以平地溫泉聞名的鄉鎮，水質清澈無味。近年發展出豐富的溫泉飯店與在地農特產（如溫泉空心菜、溫泉番茄）。" },
+            "宜蘭縣_頭城鎮": { culture: "開蘭第一城，擁有豐富的歷史文化與海洋資源。烏石港是北台灣衝浪與賞鯨的重鎮，外海的龜山島則是宜蘭的精神象徵。" },
+            "花蓮縣_花蓮市": { culture: "東部的繁華樞紐，依傍著太平洋，生活步調悠閒。市區內保留了許多日治時期的木造建築與鐵道文化。" },
+            "花蓮縣_秀林鄉": { culture: "全台面積最大的鄉鎮，擁有太魯閣國家公園絕大部分的範圍。太魯閣族的文化與世界級的大理岩峽谷景觀在此相互輝映。" },
+            "臺東縣_臺東市": { culture: "擁有純淨的空氣與遼闊的海岸線，原住民族群多元。鐵道文化與音樂藝術在市區交織，散發著慵懶而充滿生命力的氣息。" },
+            "臺東縣_池上鄉": { culture: "台灣最著名的稻米之鄉。沒有多餘的電線桿破壞景觀，四季呈現不同的田園風情，展現了最純粹的農村之美。" },
+            "澎湖縣_馬公市": { culture: "澎湖群島的政經中心，擁有四百多年的歷史。天后宮的信仰、玄武岩地質與討海人文化在此深刻體現。" },
+            "金門縣_金城鎮": { culture: "金門的政經中心與歷史古鎮。保留了明清時期的古蹟、閩南式傳統建築以及兩岸對峙時期的戰地遺跡。" },
+            "連江縣_南竿鄉": { culture: "馬祖列島的第一大島，也是行政中心。擁有獨特的戰地風光、閩東式傳統石厝聚落以及老酒文化。" }
+        };
+
+        // 取得地方資訊 (包含 fallback 機制)
+        function getDistrictInfo(city, district) {
+            const key = `${city}_${district}`;
+            if (districtData[key]) {
+                return districtData[key];
+            }
+            return {
+                culture: `來到${city}的【${district}】，這裡蘊藏著獨特的在地風情與靜謐的步調。遠離知名觀光景點的喧囂，您可以放慢腳步，細細品味專屬於${district}的自然景致與人文故事。建議可以走訪當地的傳統市集或信仰中心，體驗最真實的台灣味喔！`
+            };
+        }
+
+        const randomBtn = document.getElementById('random-btn');
+        const mapsBtn = document.getElementById('maps-btn');
+        const cityDisplay = document.getElementById('city-display');
+        const districtDisplay = document.getElementById('district-display');
+        const cityBadge = document.getElementById('city-badge');
+        const infoSection = document.getElementById('info-section');
+        const cultureInfo = document.getElementById('culture-info');
+        const btnIcon = document.getElementById('btn-icon');
+        const btnText = document.getElementById('btn-text');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+
+        // 區域篩選邏輯
+        let selectedRegions = new Set();
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const region = btn.dataset.region;
+                if (selectedRegions.has(region)) {
+                    selectedRegions.delete(region);
+                    btn.classList.remove('active');
+                } else {
+                    selectedRegions.add(region);
+                    btn.classList.add('active');
+                }
+            });
+        });
+
+        function getFilteredCities() {
+            if (selectedRegions.size === 0) {
+                return Object.keys(taiwanDistricts);
+            }
+            let validCities = [];
+            selectedRegions.forEach(region => {
+                validCities = validCities.concat(regionsData[region]);
+            });
+            return validCities;
+        }
+
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function pickLocation() {
+            const validCities = getFilteredCities();
+            const city = getRandomElement(validCities);
+            const district = getRandomElement(taiwanDistricts[city]);
+            return { city, district };
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.opacity = '1';
+            toast.classList.add('animate-wiggle');
+            setTimeout(() => { 
+                toast.style.opacity = '0'; 
+                toast.classList.remove('animate-wiggle');
+            }, 2000);
+        }
+
+        // Q版圖示輪播
+        const qIcons = ['🧋', '🥟', '🛵', '🏮', '🥭', '🍻', '🧧'];
+
+        randomBtn.addEventListener('click', () => {
+            // 檢查篩選
+            const validCities = getFilteredCities();
+            if (validCities.length === 0) {
+                showToast("至少選個區域嘛！🥺");
+                return;
+            }
+
+            // UI 重置
+            randomBtn.disabled = true;
+            btnText.textContent = '擲筊中...';
+            btnIcon.classList.add('animate-spin');
+            infoSection.style.maxHeight = '0';
+            infoSection.style.opacity = '0';
+            districtDisplay.classList.add('animate-slotRoll');
+            cityDisplay.classList.add('opacity-50');
+
+            let count = 0;
+            const maxIntervals = 15;
+            const baseSpeed = 60;
+
+            function roll(speed) {
+                const temp = pickLocation();
+                districtDisplay.textContent = temp.district;
+                cityDisplay.textContent = temp.city;
+                btnIcon.textContent = getRandomElement(qIcons);
+                
+                count++;
+
+                if (count < maxIntervals) {
+                    setTimeout(() => roll(speed + 15), speed);
+                } else {
+                    const final = pickLocation();
+                    
+                    districtDisplay.classList.remove('animate-slotRoll');
+                    cityDisplay.classList.remove('opacity-50');
+                    
+                    districtDisplay.textContent = final.district;
+                    cityDisplay.textContent = final.city;
+                    cityBadge.textContent = "📍 " + final.city;
+                    cityBadge.classList.remove('opacity-0');
+                    
+                    const info = getDistrictInfo(final.city, final.district);
+                    cultureInfo.textContent = info.culture;
+
+                    setTimeout(() => {
+                        infoSection.style.opacity = '1';
+                        infoSection.style.maxHeight = '500px'; 
+                        
+                        mapsBtn.onclick = () => {
+                            window.open(`https://www.google.com/maps/search/?api=1&query=${final.city}${final.district}`, '_blank');
+                        };
+                    }, 300);
+
+                    randomBtn.disabled = false;
+                    btnText.textContent = '再 抽 一 次';
+                    btnIcon.textContent = '🎲';
+                    btnIcon.classList.remove('animate-spin');
+                }
+            }
+
+            roll(baseSpeed);
+        });
+    </script>
+</body>
+</html>
